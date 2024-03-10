@@ -1,12 +1,13 @@
+import 'package:chat_app/services/auth.dart';
 import 'package:chat_app/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomeViewModel extends ChangeNotifier{
-  Future<void> loguot() async {
-    await FirebaseAuth.instance.signOut();
-    print("PENISSSSS");
+  final AuthService authService = AuthService();
+
+  void loguot() {
+    authService.signOut();
   }
 
   Stream<List<UserModel>> downloadUsers() {

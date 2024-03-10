@@ -1,11 +1,11 @@
 import 'package:chat_app/componets/my_btn.dart';
 import 'package:chat_app/componets/text_field.dart';
-import 'package:chat_app/screens/auth_screens/auth_viewmodel.dart';
+import 'package:chat_app/screens/auth/auth_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class LogInView extends StatelessWidget {
-  const LogInView({super.key});
+class RegisterView extends StatelessWidget {
+  const RegisterView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,15 @@ class LogInView extends StatelessWidget {
                     child: MyTextField(
                       textcontroler: vm.emailTextConroller, 
                       hintText: "Email", 
-                      obscureText: false
+                      obscureText: false, focusNode: null,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: MyTextField(
+                      textcontroler: vm.usernameTextController, 
+                      hintText: "Username", 
+                      obscureText: false, focusNode: null,
                     ),
                   ),
                   Padding(
@@ -39,29 +47,38 @@ class LogInView extends StatelessWidget {
                     child: MyTextField(
                       textcontroler: vm.passwordTextController, 
                       hintText: "Password", 
-                      obscureText: true
+                      obscureText: true, focusNode: null,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: MyTextField(
+                      textcontroler: vm.confirmPasswordTextController, 
+                      hintText: "Confirm password", 
+                      obscureText: true, focusNode: null,
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 20.0),
-                    child: MyButton(
-                      onTap: () {
-                        vm.signIn;
-                      }, 
-                      title: 'Sign In',
-                      ),
+                    child: GestureDetector(
+                      onTap: () => vm.signUp(context),
+                      child: MyButton( 
+                        title: 'Sign Up',
+                        ),
+                    ),
+                      
                   ),
                   const SizedBox(height: 50),
-                  Row(
+                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text("Not a member?"),
-                      const SizedBox(width: 4),
+                      const Text("Already a member?"),
+                      const SizedBox(width: 4,),
                       GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(context, '/register');
+                          Navigator.pushNamed(context, '/logIn');
                         },
-                        child: const Text("Register Now", style: TextStyle(fontWeight: FontWeight.bold)),
+                        child: const Text("Login now", style: TextStyle(fontWeight: FontWeight.bold)),
                       )
                     ],
                   )

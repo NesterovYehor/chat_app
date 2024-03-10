@@ -1,5 +1,6 @@
 
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:chat_app/services/auth.dart';
+import 'package:chat_app/services/firecore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -8,20 +9,27 @@ class AuthenticationViewModel extends ChangeNotifier{
   final TextEditingController passwordTextController = TextEditingController();
   final TextEditingController confirmPasswordTextController = TextEditingController();
   final TextEditingController usernameTextController = TextEditingController();
-  final User? currentUser = FirebaseAuth.instance.currentUser;
-  final CollectionReference usersRef = FirebaseFirestore.instance.collection("Users");
+  final AuthService authService = AuthService();
+  final FireStoreService fireStoreService = FireStoreService();
 
   void signIn(BuildContext context) async{
     try{
-      await FirebaseAuth.instance.signInWithEmailAndPassword(email: emailTextConroller.text, password: passwordTextController.text);
+      await authService.signInWithEmailPassword(emailTextConroller.text, passwordTextController.text);
+      emailTextConroller.clear();
+      passwordTextController.clear();
     }on FirebaseAuthException catch (e) {
       displayMessage(context, e.code);
     }
   }
-  void signUp() async{
+  void signUp(BuildContext context) async{
     if (passwordTextController.text == confirmPasswordTextController.text){
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(email: emailTextConroller.text, password: passwordTextController.text);
-          saveUser();
+     await authService.signUp(emailTextConroller.text, passwordTextController.text,);
+     if (authService.getCurrentUser() != null){
+          await fireStoreService.saveUser(emailTextConroller.text, usernameTextController.text, authService.getCurrentUser()!.uid);
+     }
+     else{
+      displayMessage(context, "ERROR WITH FIREBASE AUTH");
+     }
           emailTextConroller.text = "";
           passwordTextController.text = "";
           confirmPasswordTextController.text = "";
@@ -39,18 +47,4 @@ class AuthenticationViewModel extends ChangeNotifier{
       },
     );
   }
-
-    Future<void> saveUser() async {
-    try {
-      print("PENIS");
-      await usersRef.doc(emailTextConroller.text).set({
-        'email': emailTextConroller.text,
-        'username': usernameTextController.text,
-        });
-    } catch (e) {
-      print('Error posting message: $e');
-    }
-  } 
-
-
 }
